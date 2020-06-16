@@ -29,4 +29,13 @@ class message_received:
         else: 
             self.content = "<" + self.user + "> " + self.message
 
-        
+
+
+
+
+a = message_input("@d hello world", "user")
+b = message_received(a.addresse, a.message, a.user)
+
+
+print(a.content)
+print(b.content)
