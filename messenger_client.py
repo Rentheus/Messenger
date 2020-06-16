@@ -29,13 +29,31 @@ class message_received:
         else: 
             self.content = "<" + self.user + "> " + self.message
 
+class send_message:
+    def __init__(self, addresse, message, user):
+        self.addresse = addresse
+        self.message = message
+        self.user = user
+
+        if not len(str(address)) + len(message) + len(user) > 1024:
+            self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message
+
+            self.content = self.content.encode() 
+        else:
+            self.content = b"0"
+            print("could not send: too long")
+
+
+class rec_message:
+    def __init__(self, content):
+        self.content = content
+
+        self.content_parts = self.content.split("║")
+        self.addresse = self.content_parts[0]
+        self.user = self.content_parts[1]
+        self.message = self.content_parts[2]
+        if self.addresse == "0":
+            self.addresse = 0
 
 
 
-
-a = message_input("@d hello world", "user")
-b = message_received(a.addresse, a.message, a.user)
-
-
-print(a.content)
-print(b.content)
