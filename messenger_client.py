@@ -15,14 +15,6 @@ class message_input:
         else:
             self.message = self.content
 
-a = message_input("helloworld")
 
-print(a.message)
-print(a.addresse)
-
-b = message_input("@s hello world")
-
-print(b.message)
-print(b.addresse)
 
 
