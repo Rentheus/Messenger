@@ -46,7 +46,7 @@ class send_message:
 
 class rec_message:
     def __init__(self, content):
-        self.content = content
+        self.content = content.decode()
 
         self.content_parts = self.content.split("║")
         self.addresse = self.content_parts[0]
@@ -54,6 +54,10 @@ class rec_message:
         self.message = self.content_parts[2]
         if self.addresse == "0":
             self.addresse = 0
+
+
+
+
 
 
 
