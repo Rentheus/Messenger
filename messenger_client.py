@@ -4,9 +4,10 @@
 
 
 class message_input:
-    def __init__(self, content):
+    def __init__(self, content, user):
         self.content = content
         self.addresse = 0
+        self.user = user
         if "@" in self.content:
             self.at = self.content.find("@")
             self.space = self.content.find(" ",self.at)
@@ -17,4 +18,15 @@ class message_input:
 
 
 
+class message_received:
+    def __init__(self, addresse, message, user):
+        self.addresse = addresse
+        self.message  = message
+        self.user = user
+        if not self.addresse == 0:
+            self.content ="<" + self.user + "> @" + self.addresse + " " + self.message
 
+        else: 
+            self.content = "<" + self.user + "> " + self.message
+
+        
