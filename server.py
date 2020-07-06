@@ -5,26 +5,28 @@ import queue
 
 
 
-def Debug_Thread(connection, address, mainqueue, subqueue):
+def Debug_Thread(connection, address, mainqueue):
         connection.send(b"Debug_Thread")
         content = b""
+        try:
 
-        while not content == b"end":
+                while not content == b"end":
 
-                content = connection.recv(1024)
-                if not content == b"":
-                        
-                        printable = "<" + str(address[1]) + "> : " + content.decode()
-                        print(printable)
-                        mainqueue.put(printable)
+
+                        content = connection.recv(1024)
+                        if not content == b"":
+
+                                printable = "<" + str(address[1]) + "> : " + content.decode()
+                                print(printable)
+                                mainqueue.put(printable)
+        except WindowsError:
+                pass
 
                 
 
-                print(subqueue.qsize())
-                time.sleep(0.07)
-                if not subqueue.qsize == 0:
-                        sendable_data = subqueue.get().encode()
-                        connection.send(sendable_data)
+                
+                
+                
                 
                 
 
@@ -32,6 +34,17 @@ def Debug_Thread(connection, address, mainqueue, subqueue):
 
         time.sleep(1)
         connection.close()
+
+def Debug_thread_listener(connection, subqueue):
+        try:
+                while True:
+                        if not subqueue.qsize == 0:
+                                        sendable_data = subqueue.get().encode()
+                                        connection.send(sendable_data)
+        except WindowsError:
+                pass
+
+
 
 
 
@@ -54,6 +67,7 @@ s.bind(("192.168.178.31",port))
 s.listen(5)
 connections = []
 threads = []
+listening_threads = []
 main_queue = queue.Queue()
 ##main_queue_thread = threading.Thread(target = q)
 subqueues = []
@@ -69,7 +83,9 @@ while True:
         subqueues.append(queue.Queue())
         
 
-        threads.append(threading.Thread(target = Debug_Thread, args = (connections[-1],addr,main_queue,subqueues[-1],)))
+        threads.append(threading.Thread(target = Debug_Thread, args = (connections[-1], addr , main_queue,)))
         threads[-1].start()
+        listening_threads.append(threading.Thread(target = Debug_thread_listener, args = (connections[-1],subqueues[-1],)))
+        listening_threads[-1].start()
         
         
