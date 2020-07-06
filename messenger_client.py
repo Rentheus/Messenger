@@ -4,7 +4,12 @@
 
 import socket
 import time
+import threading
 
+def printing(socket):
+    while True:
+        printable = socket.recv(1024).decode()
+        print(printable)
 
 s = socket.socket()
 print("established socket")
@@ -16,13 +21,13 @@ s.send(b"Debug_Client")
 
 
 print(s.recv(1024).decode() + "\n")
+printing_thread = threading.Thread(target = printing, args = (s,))
+printing_thread.start()
+
 while True:
     content = input()
     s.send(content.encode())
 
-
-
-    
 
 
 class message_input:
