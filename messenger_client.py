@@ -5,6 +5,7 @@
 import socket
 import time
 import threading
+import sys
 
 def printing(socket):
     while True:
@@ -27,6 +28,9 @@ printing_thread.start()
 while True:
     content = input()
     s.send(content.encode())
+    if content == "end":
+        sys.exit()
+
 
 
 
