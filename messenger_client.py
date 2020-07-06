@@ -8,7 +8,8 @@ import threading
 import sys
 
 def printing(socket):
-    while True:
+    printable = " "
+    while not printable == "":
         printable = socket.recv(1024).decode()
         print(printable)
 
@@ -25,11 +26,12 @@ print(s.recv(1024).decode() + "\n")
 printing_thread = threading.Thread(target = printing, args = (s,))
 printing_thread.start()
 
-while True:
+
+content = ""
+while content != "end":
     content = input()
     s.send(content.encode())
-    if content == "end":
-        sys.exit()
+    
 
 
 
