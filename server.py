@@ -4,7 +4,7 @@ import time
 
 
 
-def Debug_Thread(connection):
+def Debug_Thread(connection, address):
         connection.send(b"Debug_Thread")
         content = b""
 
@@ -12,7 +12,7 @@ def Debug_Thread(connection):
 
                 content = connection.recv(1024)
                 if not content == b"":
-                        print(content)
+                        print("<" , address,  "> : " + content.decode())
 
         print("ended connection")
 
@@ -36,7 +36,7 @@ while True:
         connections.append(c)
         print("Got connection from", addr)
 
-        threads.append(threading.Thread(target = Debug_Thread, args = (connections[-1],)))
+        threads.append(threading.Thread(target = Debug_Thread, args = (connections[-1],addr,)))
         threads[-1].start()
         
         
