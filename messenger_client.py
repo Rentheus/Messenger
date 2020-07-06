@@ -2,6 +2,30 @@
 #### message struct: @name message
 
 
+import socket
+import time
+
+
+s = socket.socket()
+print("established socket")
+
+
+
+s.connect(("192.168.178.31", 697))
+
+
+
+
+
+
+
+print(s.recv(1024).decode() + "\n")
+    
+    
+
+
+
+
 
 class message_input:
     def __init__(self, content, user):
