@@ -16,6 +16,12 @@ s.send(b"Debug_Client")
 
 
 print(s.recv(1024).decode() + "\n")
+while True:
+    content = input()
+    s.send(content.encode())
+
+
+
     
 
 
