@@ -6,10 +6,17 @@ import time
 
 def Debug_Thread(connection):
         connection.send(b"Debug_Thread")
+        content = b""
 
-        print(connection.recv(1024))
+        while not content == b"end":
 
-        time.sleep(100)
+                content = connection.recv(1024)
+                if not content == b"":
+                        print(content)
+
+        print("ended connection")
+
+        time.sleep(1)
         connection.close()
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Create a socket object
