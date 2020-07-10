@@ -20,7 +20,8 @@ def Debug_Thread(connection, address, mainqueue):
                                 print(printable)
                                 mainqueue.put(printable)
         except WindowsError:
-                pass
+                #print("test")
+                mainqueue.put("<" + str(address[1]) + "> has disconnected")
 
                 
 
