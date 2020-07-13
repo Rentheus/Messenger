@@ -13,11 +13,15 @@ def printing(socket):
         printable = socket.recv(1024).decode()
         print(printable)
 
+
+
+username = input("Username?\n")
+
 s = socket.socket()
 print("established socket")
 
 
-s.connect(("192.168.178.31", 697))
+s.connect(("localhost", 697))
 s.send(b"Debug_Client")
 
 
@@ -27,20 +31,17 @@ printing_thread = threading.Thread(target = printing, args = (s,))
 printing_thread.start()
 
 
-content = ""
-while content != "end":
-    content = input()
-    s.send(content.encode())
+
     
 
 
 
 
 class message_input:
-    def __init__(self, content, user):
+    def __init__(self, content):
         self.content = content
-        self.addresse = 0
-        self.user = user
+        self.addresse = "0"
+        
         if "@" in self.content:
             self.at = self.content.find("@")
             self.space = self.content.find(" ",self.at)
@@ -62,19 +63,25 @@ class message_received:
         else: 
             self.content = "<" + self.user + "> " + self.message
 
-class send_message:
-    def __init__(self, addresse, message, user):
+class send_thread:
+    def __init__(self, user, socket):
+        self.user = user
+        self.socket = socket
+    
+    def send_message(self, addresse, message):
         self.addresse = addresse
         self.message = message
-        self.user = user
 
-        if not len(str(address)) + len(message) + len(user) > 1024:
+
+        if not len(str(self.addresse)) + len(self.message) + len(self.user) > 1024:
             self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message
 
             self.content = self.content.encode() 
         else:
             self.content = b"0"
             print("could not send: too long")
+
+        self.socket.send(self.content)
 
 
 class rec_message:
@@ -93,4 +100,13 @@ class rec_message:
 
 
 
-
+#content = ""
+#while content != "end":
+#    content = input()
+#    s.send(content.encode())
+sender = send_thread(username, s)
+while True:
+    message = input()
+    message = message_input(message)
+    sender.send_message(message.addresse, message.content)
+    
