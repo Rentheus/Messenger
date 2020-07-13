@@ -68,9 +68,17 @@ class send_thread:
         self.user = user
         self.socket = socket
     
-    def send_message(self, addresse, message):
-        self.addresse = addresse
-        self.message = message
+    def send_message(self, content):
+        self.content = content
+        self.addresse = "0"
+        
+        if "@" in self.content:
+            self.at = self.content.find("@")
+            self.space = self.content.find(" ",self.at)
+            self.addresse = self.content[self.at+1: self.space]
+            self.message = self.content[self.space+1:len(self.content)]
+        else:
+            self.message = self.content
 
 
         if not len(str(self.addresse)) + len(self.message) + len(self.user) > 1024:
@@ -107,6 +115,6 @@ class rec_message:
 sender = send_thread(username, s)
 while True:
     message = input()
-    message = message_input(message)
-    sender.send_message(message.addresse, message.content)
+    
+    sender.send_message(message)
     
