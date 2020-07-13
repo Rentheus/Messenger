@@ -5,6 +5,25 @@ import queue
 
 
 
+class rec_message:
+    def __init__(self, content):
+        self.content = content.decode()
+
+        self.content_parts = self.content.split("║")
+        self.addresse = self.content_parts[0]
+        self.user = self.content_parts[1]
+        self.message = self.content_parts[2]
+        if self.addresse == "0":
+            self.addresse = 0
+
+
+
+
+
+
+
+
+
 def Debug_Thread(connection, address, mainqueue):
         connection.send(b"Debug_Thread")
         content = b""
@@ -88,5 +107,8 @@ while True:
         threads[-1].start()
         listening_threads.append(threading.Thread(target = Debug_thread_listener, args = (connections[-1],subqueues[-1],)))
         listening_threads[-1].start()
+
+
+
         
         
