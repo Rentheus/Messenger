@@ -14,6 +14,15 @@ def printing(socket):
         print(printable)
 
 
+def debug_handshake(username, socket):
+    socket.send(("Username:"+username).encode())
+    response = socket.recv(1024).decode()
+    if response.split(":")[0] == "0":
+        debug_handshake(username, socket)
+    else:
+        pass
+
+
 
 username = input("Username?\n")
 
@@ -22,7 +31,7 @@ print("established socket")
 
 
 s.connect(("localhost", 697))
-s.send(b"Debug_Client")
+debug_handshake(username, s)
 
 
 
@@ -31,24 +40,6 @@ printing_thread = threading.Thread(target = printing, args = (s,))
 printing_thread.start()
 
 
-
-    
-
-
-
-
-class message_input:
-    def __init__(self, content):
-        self.content = content
-        self.addresse = "0"
-        
-        if "@" in self.content:
-            self.at = self.content.find("@")
-            self.space = self.content.find(" ",self.at)
-            self.addresse = self.content[self.at+1: self.space]
-            self.message = self.content[self.space+1:len(self.content)]
-        else:
-            self.message = self.content
 
 
 
@@ -97,9 +88,9 @@ class rec_message:
         self.content = content.decode()
 
         self.content_parts = self.content.split("║")
-        self.addresse = self.content_parts[0]
-        self.user = self.content_parts[1]
-        self.message = self.content_parts[2]
+        self.addresse = self.content_parts[1]
+        self.user = self.content_parts[2]
+        self.message = self.content_parts[3]
         if self.addresse == "0":
             self.addresse = 0
 

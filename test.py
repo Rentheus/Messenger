@@ -10,3 +10,5 @@ b = a.encrypt(b"testsetstsetts")
 print(b)
 
 print(a.decrypt(b))
+
+ft.Cipher.
