@@ -68,9 +68,9 @@ class PwDatabase:
 
 
 
-pdb = PwDatabase()
-pdb.open_db("pwdb.db")
-print(pdb.add_user("user3", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
-print(pdb.check_password("user", "password"))
-print(pdb.check_password("user2", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
+#pdb = PwDatabase()
+#pdb.open_db("pwdb.db")
+#print(pdb.add_user("user3", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
+#print(pdb.check_password("user", "password"))
+#print(pdb.check_password("user2", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
 
