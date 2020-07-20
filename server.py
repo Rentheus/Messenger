@@ -79,13 +79,23 @@ def Debug_thread(connection, subqueue):
 def queue_handling(subqueues, mainqueue):
         while True:
                 item = mainqueue.get()
-                print(item.user)
-                print(item.message)
-                msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
-                print(msg)
-                for i in range(len(subqueues)):
-                        subqueues[i].put(msg)
-                        print(subqueues[i])
+                
+                
+                #msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
+                if item.addresse == "0":
+                        msg = "<" +item.user+ "> " +  item.message
+                        for i in subqueues:
+                                i.put(msg)
+                                #print(subqueues[i])
+                else:
+                        msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
+                        for i in range(len(userlist)):
+                                if item.addresse == userlist[i]:
+                                        subqueues[i].put(msg)
+                        
+
+
+
 
 
 
