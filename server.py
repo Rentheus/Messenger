@@ -2,7 +2,7 @@ import socket
 import threading
 import time
 import queue
-
+import pyDHE
 
 
 class decoded_message:
@@ -17,6 +17,11 @@ class decoded_message:
             self.addresse = "0"
 
 def debug_handshake(userlist, connection):
+        alice = pyDHE.new()
+        value = alice.negotiate(connection)
+        print(value)
+        print(alice.getFinalKey())
+
         username_recv = connection.recv(1024).decode()
         print(username_recv)
         username_parts = username_recv.split(":")
