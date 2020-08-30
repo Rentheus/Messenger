@@ -3,6 +3,30 @@ import threading
 import time
 import queue
 import pyDHE
+import cryptography.fernet as fernet
+import hashlib
+import base64
+
+class encryption:
+        def __init__(self, sock, key):
+                self.sock = sock
+                self.key = key
+                self.m = hashlib.sha512()
+                self.m.update(encode(key))
+                
+                self.fernet = fernet.Fernet(base64.urlsafe_b64encode(self.m.digest()))
+
+        def encrypt(message):
+                self.message = message
+                
+                self.message = self.fernet.encrypt(message)
+                return self.message
+
+        def decrypt(message):
+                self.message = message
+
+                return self.fernet.decrypt(self.message)
+
 
 
 class decoded_message:
@@ -19,8 +43,8 @@ class decoded_message:
 def debug_handshake(userlist, connection):
         alice = pyDHE.new()
         value = alice.negotiate(connection)
-        print(value)
-        print(alice.getFinalKey())
+
+        
 
         username_recv = connection.recv(1024).decode()
         print(username_recv)
