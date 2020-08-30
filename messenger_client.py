@@ -6,21 +6,67 @@ import socket
 import time
 import threading
 import sys
+import pyDHE
+import hashlib
+import base64
+import cryptography.fernet as fernet
 
-def printing(socket):
+
+class encryption:
+        def __init__(self, key):
+                
+                self.key = key
+                self.m = hashlib.sha256()
+                self.m.update(str(key).encode())
+                
+                self.fernet = fernet.Fernet(base64.urlsafe_b64encode(self.m.digest()))
+
+        def encrypt(self, message):
+                self.message = message
+                
+                self.message = self.fernet.encrypt(message)
+                return self.message
+
+        def decrypt(self, message):
+                self.message = message
+
+                return self.fernet.decrypt(self.message)
+
+
+
+class rec_message:
+    def __init__(self, content, encryption):
+        self.content = content.decode()
+        self.encryption = encryption
+
+        self.content_parts = self.content.split("║")
+        print(self.content_parts)
+        self.addresse = self.content_parts[1]
+        self.user = self.content_parts[2]
+        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
+        
+
+
+def printing(socket, encryption):
+
     printable = " "
     while not printable == "":
-        printable = socket.recv(1024).decode()
+        p = rec_message(socket.recv(1024), encryption)
+        printable = "<" +p.user+ "> @" +p.addresse + " " + p.message
         print(printable)
 
 
 def debug_handshake(username, socket):
+    bob = pyDHE.new()
+    value = bob.negotiate(socket)
+    e = encryption(value)
     socket.send(("Username:"+username).encode())
     response = socket.recv(1024).decode()
     if response.split(":")[0] == "0":
         debug_handshake(username, socket)
     else:
-        pass
+        return e
+        
 
 
 
@@ -31,12 +77,12 @@ print("established socket")
 
 
 s.connect(("localhost", 697))
-debug_handshake(username, s)
+encryption = debug_handshake(username, s)
 
 
 
 print(s.recv(1024).decode() + "\n")
-printing_thread = threading.Thread(target = printing, args = (s,))
+printing_thread = threading.Thread(target = printing, args = (s,encryption, ))
 printing_thread.start()
 
 
@@ -55,9 +101,10 @@ class message_received:
             self.content = "<" + self.user + "> " + self.message
 
 class send_thread:
-    def __init__(self, user, socket):
+    def __init__(self, user, socket, encryption):
         self.user = user
         self.socket = socket
+        self.encryption = encryption
     
     def send_message(self, content):
         self.content = content
@@ -71,9 +118,11 @@ class send_thread:
         else:
             self.message = self.content
 
+        self.message = self.encryption.encrypt(self.message.encode())
 
-        if not len(str(self.addresse)) + len(self.message) + len(self.user) > 1024:
-            self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message
+
+        if not len(str(self.addresse)) + len(self.message.decode()) + len(self.user) > 1024:
+            self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message.decode()
 
             self.content = self.content.encode() 
         else:
@@ -82,17 +131,6 @@ class send_thread:
 
         self.socket.send(self.content)
 
-
-class rec_message:
-    def __init__(self, content):
-        self.content = content.decode()
-
-        self.content_parts = self.content.split("║")
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.content_parts[3]
-        if self.addresse == "0":
-            self.addresse = 0
 
 
 
@@ -103,7 +141,7 @@ class rec_message:
 #while content != "end":
 #    content = input()
 #    s.send(content.encode())
-sender = send_thread(username, s)
+sender = send_thread(username, s, encryption)
 while True:
     message = input()
     
