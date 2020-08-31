@@ -12,7 +12,7 @@ import base64
 import cryptography.fernet as fernet
 
 
-class encryption:
+class encr:
         def __init__(self, key):
                 
                 self.key = key
@@ -40,7 +40,7 @@ class rec_message:
         self.encryption = encryption
 
         self.content_parts = self.content.split("║")
-        print(self.content_parts)
+        #print(self.content_parts)
         self.addresse = self.content_parts[1]
         self.user = self.content_parts[2]
         self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
@@ -59,9 +59,12 @@ def printing(socket, encryption):
 def debug_handshake(username, socket):
     bob = pyDHE.new()
     value = bob.negotiate(socket)
-    e = encryption(value)
-    socket.send(("Username:"+username).encode())
+    e = encr(value)
+    
+    
+    socket.send(e.encrypt(("Username:"+username).encode()))
     response = socket.recv(1024).decode()
+    print("test")
     if response.split(":")[0] == "0":
         debug_handshake(username, socket)
     else:
@@ -81,7 +84,7 @@ encryption = debug_handshake(username, s)
 
 
 
-print(s.recv(1024).decode() + "\n")
+#print(s.recv(1024).decode() + "\n")
 printing_thread = threading.Thread(target = printing, args = (s,encryption, ))
 printing_thread.start()
 
