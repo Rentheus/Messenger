@@ -7,7 +7,7 @@ import cryptography.fernet as fernet
 import hashlib
 import base64
 
-class encryption:
+class encr:
         def __init__(self, key):
                 
                 self.key = key
@@ -47,13 +47,14 @@ class decoded_message:
 def debug_handshake(userlist, connection):
         alice = pyDHE.new()
         value = alice.negotiate(connection)
-        e = encryption(value)
+        e = encr(value)
 
         
 
-        username_recv = connection.recv(1024).decode()
+        username_recv = e.decrypt(connection.recv(1024))
+        
         print(username_recv)
-        username_parts = username_recv.split(":")
+        username_parts = username_recv.decode().split(":")
         if username_parts[0] == "Username":
                 userlist.append(username_parts[1])
                 connection.send("1:Username Accepted".encode())
@@ -66,7 +67,7 @@ def debug_handshake(userlist, connection):
 
 
 def Debug_Thread_listener(connection, address, mainqueue, encryption ):
-        connection.send(b"Debug_Thread")
+        #connection.send(b"Debug_Thread")
         content = b""
         try:
 
