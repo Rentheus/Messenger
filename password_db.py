@@ -49,6 +49,8 @@ class PwDatabase:
         self.password = password
         self.c.execute('SELECT * FROM passwords WHERE user=?', (username,))
         self.userdata = self.c.fetchone()
+        if self.userdata == None:
+            return False
         self.password = self.password.encode("utf-8")
         self.salt = self.userdata[2]
         self.password_hash = hashlib.pbkdf2_hmac("sha512", self.password, self.salt, 200298)
@@ -70,7 +72,7 @@ class PwDatabase:
 
 #pdb = PwDatabase()
 #pdb.open_db("pwdb.db")
-#print(pdb.add_user("user3", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
-#print(pdb.check_password("user", "password"))
+#print(pdb.add_user("user2", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
+#print(pdb.check_password("user3", "password"))
 #print(pdb.check_password("user2", "HNJUIHSUIH239843297597jijj(/676%&!&5"))
 
