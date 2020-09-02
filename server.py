@@ -6,6 +6,7 @@ import pyDHE
 import cryptography.fernet as fernet
 import hashlib
 import base64
+import password_db
 
 class encr:
         def __init__(self, key):
@@ -44,23 +45,39 @@ class decoded_message:
 
 
 
-def debug_handshake(userlist, connection):
+def debug_handshake(userlist, connection, passwd_db):
+        truth_value = False
         alice = pyDHE.new()
         value = alice.negotiate(connection)
         e = encr(value)
+        print(1)
 
         
 
         username_recv = e.decrypt(connection.recv(1024))
-        
-        print(username_recv)
+        time.sleep(0.13)
+        print(2)
+        passwd_recv = e.decrypt(connection.recv(1024))
+        print(3)
+        #print(username_recv)
         username_parts = username_recv.decode().split(":")
-        if username_parts[0] == "Username":
+        passwd_parts = passwd_recv.decode()
+        print(passwd_parts)
+
+        if passwd_db.add_user(username_parts[1],passwd_parts) == True:
+                truth_value = True
+                print(1)
+        elif passwd_db.check_password(username_parts[1],passwd_parts) == True:
+                truth_value = True
+                print(2)
+
+        if username_parts[0] == "Username"  and truth_value == True:
                 userlist.append(username_parts[1])
                 connection.send("1:Username Accepted".encode())
+                passwd_parts = []
                 return e
         else:
-                connection.send("0:Username requested".encode)
+                connection.send("0:Authentification failed".encode())
                 debug_handshake(userlist, connection)
 
         
@@ -139,12 +156,19 @@ def queue_handling(subqueues, mainqueue):
 
 
 
+pdb = password_db.PwDatabase()
+pdb.open_db("pwdb.db")
+
+print(0)
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Create a socket object
 host = socket.gethostbyname("192.168.172.31")
 
-port = 697
+port = 3569
 
 s.bind(("localhost",port))
+
+
 
 s.listen(5)
 connections = []
@@ -164,7 +188,9 @@ while True:
         c,addr = s.accept() #Establish a connection with the client
         connections.append(c)
         print("Got connection from", addr)
-        encryption = debug_handshake(userlist,c)
+        print(9)
+        encryption = debug_handshake(userlist,c,pdb)
+        print(2)
         encryptionlist.append(encryption)
         print(1)
 
