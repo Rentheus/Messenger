@@ -56,13 +56,16 @@ def printing(socket, encryption):
         print(printable)
 
 
-def debug_handshake(username, socket):
+def debug_handshake(username, passw, socket):
     bob = pyDHE.new()
     value = bob.negotiate(socket)
     e = encr(value)
     
     
     socket.send(e.encrypt(("Username:"+username).encode()))
+    time.sleep(0.12)
+    socket.send(e.encrypt((passwd).encode()))
+    passw = ""
     response = socket.recv(1024).decode()
     print("test")
     if response.split(":")[0] == "0":
@@ -74,15 +77,16 @@ def debug_handshake(username, socket):
 
 
 username = input("Username?\n")
+passwd = input("Password?\n")
 
 s = socket.socket()
 print("established socket")
 
 
-s.connect(("localhost", 697))
-encryption = debug_handshake(username, s)
+s.connect(("localhost", 3569))
+encryption = debug_handshake(username, passwd, s)
 
-
+passwd = ""
 
 #print(s.recv(1024).decode() + "\n")
 printing_thread = threading.Thread(target = printing, args = (s,encryption, ))
