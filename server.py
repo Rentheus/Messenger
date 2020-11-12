@@ -139,16 +139,19 @@ def queue_handling(subqueues, mainqueue):
                 
                 
                 #msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
-                if item.addresse == "0":
-                        msg = ("║0║"+item.user  ,  item.message)
-                        for i in subqueues:
-                                i.put(msg)
-                                #print(subqueues[i])
-                else:
-                        msg = ("║" +item.addresse+ "║" +item.user, item.message)
-                        for i in range(len(userlist)):
-                                if item.addresse == userlist[i]:
-                                        subqueues[i].put(msg)
+                try:
+                        if item.addresse == "0":
+                                msg = ("║0║"+item.user  ,  item.message)
+                                for i in subqueues:
+                                        i.put(msg)
+                                        #print(subqueues[i])
+                        else:
+                                msg = ("║" +item.addresse+ "║" +item.user, item.message)
+                                for i in range(len(userlist)):
+                                        if item.addresse == userlist[i]:
+                                                subqueues[i].put(msg)
+                except AttributeError:
+                        pass
                         
 
 
