@@ -64,12 +64,12 @@ class encr:
 
 class decoded_message:
     def __init__(self, content, encryption):
-        self.content = byte_to_dict(content)
+        self.content = content
 
         #self.content_parts = self.content.split("║")
-        self.addresse = self.content_parts['to']
-        self.user = self.content_parts['from']
-        self.message = self.content_parts['msg']
+        self.addresse = self.content['to']
+        self.user = self.content['from']
+        self.message = self.content['msg']
         self.encryption = encryption
         self.message = self.encryption.decrypt(self.message.encode()).decode()
         if self.addresse == "0":
@@ -126,7 +126,7 @@ def Debug_Thread_listener(connection, address, mainqueue, encryption ):
                         content = connection.recv(1024)
                         if not content == b"":
 
-                                printable = content.decode()
+                                printable = byte_to_dict(content)
                                 print(printable)
                                 message_data = decoded_message(printable, encryption)
                                 print(message_data.user +": " + message_data.message)

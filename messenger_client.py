@@ -11,6 +11,7 @@ import hashlib
 import base64
 import cryptography.fernet as fernet
 import json
+import time
 
 ENCODING = 'utf-8'
 
@@ -71,9 +72,9 @@ class rec_message:
 
         #self.content_parts = self.content.split("║")
         #print(self.content_parts)
-        self.addresse = self.content['to']
-        self.user = self.content_parts['from']
-        self.message = self.encryption.decrypt(self.content_parts['msg'].encode()).decode()
+        self.addresse = str(self.content['to'])
+        self.user = self.content['from']
+        self.message = self.encryption.decrypt(self.content['msg'].encode()).decode()
         
 
 
@@ -168,10 +169,9 @@ class send_thread:
                 }
             self.socket.send(dict_to_bytes(self.packet))
         else:
-            self.content = b"0"
+            self.packet = b"0"
             print("could not send: too long")
 
-        self.socket.send(self.content)
 
 
 

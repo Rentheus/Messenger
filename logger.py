@@ -31,10 +31,10 @@ class logfile:
         self.f.write(datetime.datetime.today().isoformat() + ":  " + self.log_message+"\n")
         
 
-a = logfile()
-a.log("test")
-
-for i in range(10):
-    b = random.randint(0, 1)
-    time.sleep(b)
-    a.log("Time elapsed: " + str(b))
+#a = logfile()
+#a.log("test")
+#
+#for i in range(10):
+#    b = random.randint(0, 1)
+#    time.sleep(b)
+#    a.log("Time elapsed: " + str(b))
