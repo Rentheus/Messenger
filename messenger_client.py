@@ -72,7 +72,7 @@ class rec_message:
         #self.content_parts = self.content.split("║")
         #print(self.content_parts)
         self.addresse = self.content['to']
-        self.user = self.content_parts['fro,']
+        self.user = self.content_parts['from']
         self.message = self.encryption.decrypt(self.content_parts['msg'].encode()).decode()
         
 
