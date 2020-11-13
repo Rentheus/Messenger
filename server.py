@@ -64,12 +64,12 @@ class encr:
 
 class decoded_message:
     def __init__(self, content, encryption):
-        self.content = content
+        self.content = byte_to_dict(content)
 
-        self.content_parts = self.content.split("║")
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.content_parts[3]
+        #self.content_parts = self.content.split("║")
+        self.addresse = self.content_parts['to']
+        self.user = self.content_parts['from']
+        self.message = self.content_parts['msg']
         self.encryption = encryption
         self.message = self.encryption.decrypt(self.message.encode()).decode()
         if self.addresse == "0":
@@ -110,7 +110,7 @@ def debug_handshake(userlist, connection, passwd_db):
                 return e
         else:
                 connection.send("0:Authentification failed".encode())
-                debug_handshake(userlist, connection)
+                debug_handshake(userlist, connection, password_db)
 
         
 
