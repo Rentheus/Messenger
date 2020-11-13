@@ -100,8 +100,9 @@ def Debug_Thread_listener(connection, address, mainqueue, encryption ):
                                 print(message_data.user +": " + message_data.message)
                                 mainqueue.put(message_data)
         except WindowsError:
+                pass
                 #print("test")
-                mainqueue.put("<" + str(address[1]) + "> has disconnected")
+                #mainqueue.put("<" + str(address[1]) + "> has disconnected")
 
                 
 
