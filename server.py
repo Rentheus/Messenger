@@ -7,6 +7,38 @@ import cryptography.fernet as fernet
 import hashlib
 import base64
 import password_db
+import Crypto
+import json
+
+ENCODING = 'utf-8'
+
+def dict_to_bytes(message_dict):
+    """
+    Convert dict to bytes
+    :param message_dict: dict
+    :return: bytes
+    """
+    if not isinstance(message_dict, dict):
+        raise TypeError
+
+    jmessage = json.dumps(message_dict)
+
+    bmessage = jmessage.encode(ENCODING)
+    return bmessage
+
+def byte_to_dict(message_byte):
+    """
+    Convert bytes to dict
+    :param message_byte: bytes
+    :return: dict
+    """
+    if not isinstance(message_byte, bytes):
+        raise TypeError
+
+    jmessage = message_byte.decode(ENCODING)
+
+    message_dict = json.loads(jmessage)
+    return message_dict
 
 class encr:
         def __init__(self, key):
@@ -34,10 +66,10 @@ class decoded_message:
     def __init__(self, content, encryption):
         self.content = content
 
-        self.content_parts = self.content.split("║")
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.content_parts[3]
+        #self.content_parts = self.content.split("║")
+        self.addresse = self.content['to']
+        self.user = self.content['from']
+        self.message = self.content['msg']
         self.encryption = encryption
         self.message = self.encryption.decrypt(self.message.encode()).decode()
         if self.addresse == "0":
@@ -78,7 +110,7 @@ def debug_handshake(userlist, connection, passwd_db):
                 return e
         else:
                 connection.send("0:Authentification failed".encode())
-                debug_handshake(userlist, connection)
+                debug_handshake(userlist, connection, password_db)
 
         
 
@@ -94,7 +126,7 @@ def Debug_Thread_listener(connection, address, mainqueue, encryption ):
                         content = connection.recv(1024)
                         if not content == b"":
 
-                                printable = content.decode()
+                                printable = byte_to_dict(content)
                                 print(printable)
                                 message_data = decoded_message(printable, encryption)
                                 print(message_data.user +": " + message_data.message)
@@ -122,10 +154,18 @@ def Debug_thread(connection, subqueue, encryption):
                 while True:
                         if not subqueue.qsize == 0:
                                         
-                                        msg, message = subqueue.get()
+                                        addresse, user, message = subqueue.get()
                                         message = encryption.encrypt(message.encode())
-                                        sendable_data = msg.encode() +"║".encode()+ message
-                                        connection.send(sendable_data)
+                                        packet = {
+                                                'action': 'msg',
+                                                'time': time.time(),
+                                                'from': user,
+                                                'to': addresse,
+                                                'msg': message.decode()
+                                                }
+
+                                        packet = dict_to_bytes(packet)
+                                        connection.send(packet)
         except WindowsError:
                 pass
 
@@ -142,12 +182,14 @@ def queue_handling(subqueues, mainqueue):
                 #msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
                 try:
                         if item.addresse == "0":
-                                msg = ("║0║"+item.user  ,  item.message)
+                                msg = (0, item.user  ,  item.message)
                                 for i in subqueues:
                                         i.put(msg)
                                         #print(subqueues[i])
+                                
+            
                         else:
-                                msg = ("║" +item.addresse+ "║" +item.user, item.message)
+                                msg = (item.addresse, item.user, item.message)
                                 for i in range(len(userlist)):
                                         if item.addresse == userlist[i]:
                                                 subqueues[i].put(msg)

@@ -10,7 +10,38 @@ import pyDHE
 import hashlib
 import base64
 import cryptography.fernet as fernet
+import json
+import time
 
+ENCODING = 'utf-8'
+
+def dict_to_bytes(message_dict):
+    """
+    Convert dict to bytes
+    :param message_dict: dict
+    :return: bytes
+    """
+    if not isinstance(message_dict, dict):
+        raise TypeError
+
+    jmessage = json.dumps(message_dict)
+
+    bmessage = jmessage.encode(ENCODING)
+    return bmessage
+
+def byte_to_dict(message_byte):
+    """
+    Convert bytes to dict
+    :param message_byte: bytes
+    :return: dict
+    """
+    if not isinstance(message_byte, bytes):
+        raise TypeError
+
+    jmessage = message_byte.decode(ENCODING)
+
+    message_dict = json.loads(jmessage)
+    return message_dict
 
 class encr:
         def __init__(self, key):
@@ -36,14 +67,14 @@ class encr:
 
 class rec_message:
     def __init__(self, content, encryption):
-        self.content = content.decode()
+        self.content = byte_to_dict(content)
         self.encryption = encryption
 
-        self.content_parts = self.content.split("║")
+        #self.content_parts = self.content.split("║")
         #print(self.content_parts)
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
+        self.addresse = str(self.content['to'])
+        self.user = self.content['from']
+        self.message = self.encryption.decrypt(self.content['msg'].encode()).decode()
         
 
 
@@ -69,7 +100,7 @@ def debug_handshake(username, passw, socket):
     response = socket.recv(1024).decode()
     print("test")
     if response.split(":")[0] == "0":
-        debug_handshake(username, socket)
+        debug_handshake(username, passw, socket)
     else:
         return e
         
@@ -129,14 +160,18 @@ class send_thread:
 
 
         if not len(str(self.addresse)) + len(self.message.decode()) + len(self.user) > 1024:
-            self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message.decode()
-
-            self.content = self.content.encode() 
+            self.packet = {
+                'action': 'msg',
+                'time': time.time(),
+                'from': self.user,
+                'to': self.addresse,
+                'msg': self.message.decode()
+                }
+            self.socket.send(dict_to_bytes(self.packet))
         else:
-            self.content = b"0"
+            self.packet = b"0"
             print("could not send: too long")
 
-        self.socket.send(self.content)
 
 
 
