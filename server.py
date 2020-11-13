@@ -154,10 +154,18 @@ def Debug_thread(connection, subqueue, encryption):
                 while True:
                         if not subqueue.qsize == 0:
                                         
-                                        msg, message = subqueue.get()
+                                        addresse, user, message = subqueue.get()
                                         message = encryption.encrypt(message.encode())
-                                        sendable_data = msg.encode() +"║".encode()+ message
-                                        connection.send(sendable_data)
+                                        packet = {
+                                                'action': 'msg',
+                                                'time': time.time(),
+                                                'from': user,
+                                                'to': addresse,
+                                                'msg': message.decode()
+                                                }
+
+                                        packet = dict_to_bytes(packet)
+                                        connection.send(packet)
         except WindowsError:
                 pass
 
@@ -174,12 +182,14 @@ def queue_handling(subqueues, mainqueue):
                 #msg = "<" +item.user+ "> @" +item.addresse + " " +  item.message
                 try:
                         if item.addresse == "0":
-                                msg = ("║0║"+item.user  ,  item.message)
+                                msg = (0, item.user  ,  item.message)
                                 for i in subqueues:
                                         i.put(msg)
                                         #print(subqueues[i])
+                                
+            
                         else:
-                                msg = ("║" +item.addresse+ "║" +item.user, item.message)
+                                msg = (item.addresse, item.user, item.message)
                                 for i in range(len(userlist)):
                                         if item.addresse == userlist[i]:
                                                 subqueues[i].put(msg)
