@@ -8,6 +8,9 @@ import hashlib
 import base64
 import password_db
 import Crypto
+import json
+
+ENCODING = 'utf-8'
 
 class encr:
         def __init__(self, key):
