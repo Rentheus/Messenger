@@ -7,6 +7,7 @@ import cryptography.fernet as fernet
 import hashlib
 import base64
 import password_db
+import Crypto
 
 class encr:
         def __init__(self, key):
