@@ -66,14 +66,14 @@ class encr:
 
 class rec_message:
     def __init__(self, content, encryption):
-        self.content = content.decode()
+        self.content = byte_to_dict(content)
         self.encryption = encryption
 
-        self.content_parts = self.content.split("║")
+        #self.content_parts = self.content.split("║")
         #print(self.content_parts)
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
+        self.addresse = self.content['to']
+        self.user = self.content_parts['fro,']
+        self.message = self.encryption.decrypt(self.content_parts['msg'].encode()).decode()
         
 
 
