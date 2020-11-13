@@ -64,7 +64,16 @@ class encr:
 
 
 
+class rec_message:
+    def __init__(self, content, encryption):
+        self.content = content.decode()
+        self.encryption = encryption
 
+        self.content_parts = self.content.split("║")
+        #print(self.content_parts)
+        self.addresse = self.content_parts[1]
+        self.user = self.content_parts[2]
+        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
         
 
 
@@ -94,16 +103,7 @@ def debug_handshake(username, passw, socket):
     else:
         return e
         
-class rec_message:
-    def __init__(self, content, encryption):
-        self.content = content.decode()
-        self.encryption = encryption
 
-        self.content_parts = self.content.split("║")
-        #print(self.content_parts)
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
 
 
 username = input("Username?\n")
@@ -159,9 +159,14 @@ class send_thread:
 
 
         if not len(str(self.addresse)) + len(self.message.decode()) + len(self.user) > 1024:
-            self.content = "║"+ self.addresse + "" + "║" + self.user + "║" + self.message.decode()
-
-            self.content = self.content.encode() 
+            self.packet = {
+                'action': 'msg',
+                'time': time.time(),
+                'from': self.user,
+                'to': self.addresse,
+                'msg': self.message.decode()
+                }
+            self.socket.send(dict_to_bytes(self.packet))
         else:
             self.content = b"0"
             print("could not send: too long")
