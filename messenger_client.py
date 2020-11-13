@@ -64,16 +64,7 @@ class encr:
 
 
 
-class rec_message:
-    def __init__(self, content, encryption):
-        self.content = content.decode()
-        self.encryption = encryption
 
-        self.content_parts = self.content.split("║")
-        #print(self.content_parts)
-        self.addresse = self.content_parts[1]
-        self.user = self.content_parts[2]
-        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
         
 
 
@@ -103,7 +94,16 @@ def debug_handshake(username, passw, socket):
     else:
         return e
         
+class rec_message:
+    def __init__(self, content, encryption):
+        self.content = content.decode()
+        self.encryption = encryption
 
+        self.content_parts = self.content.split("║")
+        #print(self.content_parts)
+        self.addresse = self.content_parts[1]
+        self.user = self.content_parts[2]
+        self.message = self.encryption.decrypt(self.content_parts[3].encode()).decode()
 
 
 username = input("Username?\n")
