@@ -32,10 +32,36 @@ class file_to_send:
     def __init__(self, file, encryption):
         self.file = file
         self.encryption = encryption
-        self.filedata = encryption.encrypt(open(file).read())
-        self.filepacket = {
-            "file" : self.file,
-            
-            
+        self.filedata = encryption.encrypt(open(file).read().encode(ENCODING))
+        self.packet = {
+                "filename" : self.file,
+                "number" : "0000000", 
+                "filedata" : ""
         }
+        self.jmessage = json.dumps(self.packet)
+        self.bmessage = self.jmessage.encode(ENCODING)
+        self.p_len = len(self.bmessage)
+        self.m_len = 1024-self.p_len
 
+        self.message_packets = []
+        
+        
+        for norway in range(int(len(self.filedata)/(self.m_len))+1):
+                self.packet = self.packet = {
+                "filename" : self.file,
+                "number" : "0000000", 
+                "filedata" : self.filedata[norway*self.m_len:(norway+1)*self.m_len].decode(ENCODING)
+        }
+                self.message_packets.append(json.dumps(self.packet).encode(ENCODING))
+
+        
+        for u in self.message_packets:
+                print(u)
+                print(len(u))
+
+
+
+
+
+b = encr(b"setjfdjidsjhfiusdhnfuidshnfiuds")
+a = file_to_send("server.py", b)
