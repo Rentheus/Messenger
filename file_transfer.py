@@ -29,11 +29,14 @@ class encr:
                 return self.fernet.decrypt(self.message)
 
 class file_to_send:
-    def __init__(self, file, encryption):
+    def __init__(self, file, encryption, addresse):
         self.file = file
         self.encryption = encryption
-        self.filedata = encryption.encrypt(open(file).read().encode(ENCODING))
+        self.filedata = self.encryption.encrypt(open(file).read().encode(ENCODING))
+        self.addresse = addresse
         self.packet = {
+                'action': 'file',
+                'to': self.addresse,
                 "filename" : self.file,
                 "number" : "0000000", 
                 "filedata" : ""
@@ -48,6 +51,8 @@ class file_to_send:
         
         for norway in range(int(len(self.filedata)/(self.m_len))+1):
                 self.packet = self.packet = {
+                'action': 'file',
+                'to': self.addresse,
                 "filename" : self.file,
                 "number" : "0000000", 
                 "filedata" : self.filedata[norway*self.m_len:(norway+1)*self.m_len].decode(ENCODING)
@@ -63,5 +68,7 @@ class file_to_send:
 
 
 
+
+
 b = encr(b"setjfdjidsjhfiusdhnfuidshnfiuds")
-a = file_to_send("server.py", b)
+a = file_to_send("server.py", b, "user")
