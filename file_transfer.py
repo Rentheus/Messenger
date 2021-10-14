@@ -115,4 +115,4 @@ for i in tmp:
         t.append(json.loads(i.decode(ENCODING)))
 
 c = recv_file(t, b)
-c.save_file()
+c.print_file()

@@ -112,9 +112,9 @@ passwd = input("Password?\n")
 
 s = socket.socket()
 print("established socket")
-
-
-s.connect(("localhost", 3569))
+tmp = socket.gethostbyname("2.tcp.ngrok.io")
+print(tmp)
+s.connect((tmp, 10135))
 encryption = debug_handshake(username, passwd, s)
 
 passwd = ""
