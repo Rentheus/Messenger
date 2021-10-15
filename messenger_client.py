@@ -12,6 +12,7 @@ import base64
 import cryptography.fernet as fernet
 import json
 import time
+#first install pycryptodome then cryptography
 
 ENCODING = 'utf-8'
 
