@@ -7,7 +7,7 @@ import cryptography.fernet as fernet
 import hashlib
 import base64
 import password_db
-import Crypto
+#import Crypto
 import json
 
 ENCODING = 'utf-8'
@@ -208,7 +208,7 @@ pdb.open_db("pwdb.db")
 print(0)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Create a socket object
-host = socket.gethostbyname("192.168.172.31")
+host = socket.gethostbyname("192.168.178.35")
 
 port = 3569
 
